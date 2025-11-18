@@ -13,16 +13,16 @@ include("header.php");
 <?php
 include("nav.php");
 ?>
-<div>
-    <div>
-        <?php
-        if(isset($_GET['link'])){
-            include($_GET['content/'.$_GET['link']]);
-        } else {
-            include('content/avaleht.php');
-        }
-        ?>
-    </div>
+<div class="flex-container">
+    <?php
+    if(isset($_GET["Link"])){
+        include("content/".$_GET["Link"]);
+    }
+    else{
+        include("content/avaleht.php");
+    }
+    ?>
+</div>
     <div>
         <img src="image/pilt.png" alt="pilt vabal valikul">
     </div>

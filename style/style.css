@@ -40,13 +40,13 @@ footer {
     text-align: center;
 }
 
-div {
+div.flex-container {
     display: flex;
     flex-direction: row;
     margin-left: 25%;
 }
 
-div > div{
+div.flex-container > div{
     margin: 10px;
     flex: 1;
     border: solid 1pt grey;
@@ -62,4 +62,16 @@ div > div{
 
 img{
     width: 200px;
+}
+
+.container {
+    display: flex;
+    background-color: DodgerBlue;
+}
+
+.container div {
+    background-color: #f1f1f1;
+    margin: 10px;
+    padding: 20px;
+    font-size: 30px;
 }
