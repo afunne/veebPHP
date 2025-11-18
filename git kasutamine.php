@@ -32,4 +32,19 @@ PS C:\Users\opilane\Desktop\PHPesimineTund> git config --global --list
 </li>
 <?php
 echo "<li>GITHUB projectiga sidumine";
+echo "<pre>";
+echo ">git remote add origin git@github.com:afunne/veebPHP.git
+
+C:\Users\opilane\Desktop\PHPesimineTund>git branch -M main";
+echo "</pre>";
+echo "</li>";
+
+echo "<li>Projekti kloonimine desktopi.<br>
+* Kontrolli et id_rsa võti on olemas .shh kaustas<br>
+* GIT CMD on lahti ja <br>";
+echo "<pre>";
+echo "git clone git@github.com:afunne/veebPHP.git";
+echo "</pre>";
+echo "</li>";
+echo "</ol>";
 
