@@ -1,7 +1,26 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <title>Õpitaja PHP tööd</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
 <?php
-echo "<h1>";
-echo "Tere hommikust";
-echo "</h1>";
-$tekst="TARpv24 õpilane";
-echo $tekst;
+include("header.php");
 ?>
+<!--navigeerimisimenüü-->
+<?php
+include("nav.php");
+?>
+<main>
+    <section>
+
+    </section>
+</main>
+
+<?php
+include("footer.php");
+?>
+</body>
+</html>
