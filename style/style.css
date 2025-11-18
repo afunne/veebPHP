@@ -24,3 +24,42 @@ li a:hover {
     background-color: #555555;
     color: white;
 }
+
+li a:not(.active) {
+    background-color: #555555;
+    color: white;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: gray;
+    color: white;
+    text-align: center;
+}
+
+div {
+    display: flex;
+    flex-direction: row;
+    margin-left: 25%;
+}
+
+div > div{
+    margin: 10px;
+    flex: 1;
+    border: solid 1pt grey;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+@media screen and (max-width: 600px){
+    div.flex-container{
+        flex-direction: column;
+    }
+}
+
+img{
+    width: 200px;
+}

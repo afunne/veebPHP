@@ -13,11 +13,21 @@ include("header.php");
 <?php
 include("nav.php");
 ?>
-<main>
-    <section>
+<div>
+    <div>
+        <?php
+        if(isset($_GET['link'])){
+            include($_GET['content/'.$_GET['link']]);
+        } else {
+            include('content/avaleht.php');
+        }
+        ?>
+    </div>
+    <div>
+        <img src="image/pilt.png" alt="pilt vabal valikul">
+    </div>
+</div>
 
-    </section>
-</main>
 
 <?php
 include("footer.php");
