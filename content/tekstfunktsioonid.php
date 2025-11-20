@@ -1,4 +1,12 @@
 <?php
+function ClearVarsExpect($url, $varname){
+    $url=basename($url);
+    if(str_starts_with($url, "?")){
+        return "?$varname=".$_REQUEST[$varname];
+    }
+    return strtok($url, "?")."?$varname=".$_REQUEST[$varname];
+}
+
 echo "<h2>Tekstifunctsioonid</h2>";
 $tekst="PHP on skriptikeel serveripoolne";
 echo $tekst;
@@ -69,7 +77,7 @@ echo "<li>".ucwords($linn);" </li>";
 echo "<li>".$onlyconsonants = str_replace($vowels, "", $linn);"</li>";
 echo "</ol>";
 ?>
-<form name="tekstikontroll" action="tekstfunktsioonid.php" method="post">
+<form name="tekstikontroll" action= "<?=ClearVarsExpect($_SERVER['REQUEST_URI'], 'link')?>" method="post">
     <label for="linn">Sisesta Liannanimi:</label>
     <input type="text" id="linn" name="linn">
     <input type="submit" value="Kontrolli">

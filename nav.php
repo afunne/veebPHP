@@ -11,8 +11,8 @@
         <li>
             <a href="?Link=aeg.php">Muusika</a></li>
         <li>
-            <a href = "https://khusseintakhmazov24.thkit.ee/">index</a></li>
-        <li>
             <a href = "?Link=tekstfunktsioonid.php">TekstFunktsioonid</a></li>
+        <li>
+            <a href = "https://khusseintakhmazov24.thkit.ee/">index</a></li>
     </ul>
 </nav>
