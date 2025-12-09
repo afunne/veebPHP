@@ -1,0 +1,2 @@
+<h2>Tere tulemast anekdootide lehele!</h2>
+<p>Siin lehel leiate naljakaid anekdoote. Valige üks anekdootidest ülaltoodud navigatsioonist.</p>
