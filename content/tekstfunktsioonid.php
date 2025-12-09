@@ -77,11 +77,11 @@ echo "<li>".ucwords($linn);" </li>";
 echo "<li>".$onlyconsonants = str_replace($vowels, "", $linn);"</li>";
 echo "</ol>";
 ?>
-<form name="tekstikontroll" action= "<?=ClearVarsExpect($_SERVER['REQUEST_URI'], 'link')?>" method="post">
-    <label for="linn">Sisesta Liannanimi:</label>
-    <input type="text" id="linn" name="linn">
-    <input type="submit" value="Kontrolli">
-</form>
+    <form name="tekstikontroll" action= "<?=ClearVarsExpect($_SERVER['REQUEST_URI'], 'link')?>" method="post">
+        <label for="linn">Sisesta Liannanimi:</label>
+        <input type="text" id="linn" name="linn">
+        <input type="submit" value="Kontrolli">
+    </form>
 <?php
 if(isset($_REQUEST["linn"])){
     if($_REQUEST["linn"]== "Tallinn"){
