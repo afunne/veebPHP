@@ -1,0 +1,1 @@
+Kuidas tarkvaraarendajad teevad nälja? - WriteLine("hahahahah");
