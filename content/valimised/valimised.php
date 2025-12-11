@@ -19,7 +19,19 @@ $paring->execute();
 header("location: " . $_SERVER["PHP_SELF"]);
 $conn->close();
 }
+//komentaari lisamine -Update
+if (isset($_REQUEST["uue_komment_id"])) {
+    $paring = $conn->prepare("UPDATE valimised SET kommentaarid = CONCAT(kommentaarid, ?) WHERE id = ?");
+    $komment2 = $_REQUEST["uue_kommentaar"]. "\n";
+    $paring->bind_param("si", $komment2, $_REQUEST["uue_komment_id"]);
+    $paring->execute();
+    header("location: " . $_SERVER["PHP_SELF"]);
+    exit;
+}
 ?>
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,7 +47,7 @@ $conn->close();
         </li>
 
         <li>
-            <a href="valimisedAdmin.php"> Kasutaja leht</a>
+            <a href="valimisedAdmin.php"> Admin leht</a>
         </li>
     </ul>
 </nav>
@@ -46,12 +58,13 @@ $conn->close();
         <th>Punktid</th>
         <th>Lisamiaeg</th>
         <th>Lisa</th>
+        <th>komentaar</th>
     </tr>
     <?php
     global $conn;
     $paring=$conn->prepare("
-    select id, president, pilt, punktid, lisamiaeg from valimised where avalik=1");
-    $paring->bind_result($id, $president, $pilt, $punktid, $lisamisaeg);
+    select id, president, pilt, punktid, lisamiaeg, kommentaarid from valimised where avalik=1");
+    $paring->bind_result($id, $president, $pilt, $punktid, $lisamisaeg, $kommentaarid);
     $paring->execute();
     while ($paring->fetch()) {
         echo "<tr>";
@@ -60,6 +73,13 @@ $conn->close();
         echo "<td>".$punktid."</td>";
         echo "<td>".$lisamisaeg."</td>";
         echo "<td><a href='?lisa1punkt=$id'> +1 punkt</a></td>";
+        echo "<td>".nl2br(htmlspecialchars($kommentaarid))."</td>";
+        echo "</tr>
+<form action='?' method='post'>
+<input type='hidden' name='uue_komment_id' value='$id'>
+<label for='uue_kommentaar'></label>
+<input type='text' name='uue_kommentaar' id='uue_kommentaar'>
+<input type='submit' value='saada'>";
         echo "</tr>";
     }
     ?>
