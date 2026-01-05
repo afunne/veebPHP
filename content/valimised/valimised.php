@@ -19,10 +19,17 @@ $paring->execute();
 header("location: " . $_SERVER["PHP_SELF"]);
 $conn->close();
 }
-if(isset($_REQUEST["uue_komment_id"]) && !empty($_REQUEST["uue_komment_id"])){
-    $paring=$conn->prepare(
-        "UPDATE valimised set kommentaarid = concat(kommentaarid, ?) where id = ?");
-    $paring->bind_param("si", $_REQUEST['uue_kommentaar'], $_REQUEST['uue_komment_id']);
+if (isset($_REQUEST["uue_komment_id"]) && !empty($_REQUEST["uue_komment_id"])) {
+    // Prepare the SQL query to prepend the new comment
+    $paring = $conn->prepare("
+        UPDATE valimised 
+        SET kommentaarid = CONCAT(?, kommentaarid) 
+        WHERE id = ?
+    ");
+    $new_comment = $_REQUEST['uue_kommentaar'] . "\n";
+
+    $paring->bind_param("si", $new_comment, $_REQUEST['uue_komment_id']);
+
     $paring->execute();
     header("location: " . $_SERVER["PHP_SELF"]);
 }
