@@ -19,14 +19,12 @@ $paring->execute();
 header("location: " . $_SERVER["PHP_SELF"]);
 $conn->close();
 }
-//komentaari lisamine -Update
-if (isset($_REQUEST["uue_komment_id"])) {
-    $paring = $conn->prepare("UPDATE valimised SET kommentaarid = CONCAT(kommentaarid, ?) WHERE id = ?");
-    $komment2 = $_REQUEST["uue_kommentaar"]. "\n";
-    $paring->bind_param("si", $komment2, $_REQUEST["uue_komment_id"]);
+if(isset($_REQUEST["uue_komment_id"]) && !empty($_REQUEST["uue_komment_id"])){
+    $paring=$conn->prepare(
+        "UPDATE valimised set kommentaarid = concat(kommentaarid, ?) where id = ?");
+    $paring->bind_param("si", $_REQUEST['uue_kommentaar'], $_REQUEST['uue_komment_id']);
     $paring->execute();
     header("location: " . $_SERVER["PHP_SELF"]);
-    exit;
 }
 ?>
 
@@ -74,13 +72,14 @@ if (isset($_REQUEST["uue_komment_id"])) {
         echo "<td>".$lisamisaeg."</td>";
         echo "<td><a href='?lisa1punkt=$id'> +1 punkt</a></td>";
         echo "<td>".nl2br(htmlspecialchars($kommentaarid))."</td>";
-        echo "</tr>
-<form action='?' method='post'>
-<input type='hidden' name='uue_komment_id' value='$id'>
-<label for='uue_kommentaar'></label>
-<input type='text' name='uue_kommentaar' id='uue_kommentaar'>
-<input type='submit' value='saada'>";
-        echo "</tr>";
+        echo "<td>
+            <form action='' method='post'>
+                <input type='hidden' name='uue_komment_id' value='" . $id . "'>
+                <label for='uue_kommentaar_" . $id . "'>Kommentaar: </label>
+                <input type='text' name='uue_kommentaar' id='uue_kommentaar_" . $id . "'>
+                <input type='submit' value='Saada'>
+            </form>
+        </td>";
     }
     ?>
 </table>
