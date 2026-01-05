@@ -1,0 +1,105 @@
+/* --- BASE STYLES --- */
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f0f8;
+    color: #2c1a4c;
+    padding: 10px;
+}
+
+.wrapper {
+    max-width: 500px; /* simulate phone width */
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    padding: 15px 10px;
+    background: linear-gradient(135deg, #7b4dff, #a17cff);
+    color: white;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+/* SIMPLE HAMBURGER */
+.hamburger {
+    display: block;
+    cursor: pointer;
+    width: 30px;
+    height: 22px;
+    position: relative;
+    margin: 0 auto 10px auto;
+}
+
+.hamburger span {
+    background: white;
+    display: block;
+    height: 4px;
+    width: 100%;
+    margin-bottom: 5px;
+    border-radius: 2px;
+}
+
+/* NAVIGATION */
+nav {
+    display: none; /* hidden by default */
+    flex-direction: column;
+    gap: 8px;
+}
+
+nav.active {
+    display: flex;
+}
+
+nav a {
+    padding: 12px 0;
+    text-align: center;
+    background: #a17cff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+nav a:hover {
+    background: #7b4dff;
+}
+
+/* CONTENT */
+.content {
+    display: none;
+    padding: 15px;
+    background: #e6d9f8;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.content.active {
+    display: block;
+}
+
+.anekdoot {
+    border-left: 4px solid #9c5eff;
+    padding-left: 10px;
+    margin-top: 8px;
+    font-size: 0.95rem;
+}
+
+.anekdoot strong {
+    color: #4b007d;
+}
+
+footer {
+    text-align: center;
+    padding: 15px;
+    background: #7b4dff;
+    color: white;
+    border-radius: 10px;
+    margin-top: 20px;
+}
