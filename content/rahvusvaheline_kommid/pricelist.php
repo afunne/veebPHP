@@ -7,6 +7,7 @@ if (!isset($pdo) || !$pdo) {
     http_response_code(500);
     echo "Andmebaasi ühendus puudub. Kontrolli db.php seadeid ja faili asukohta.";
     exit;
+    
 }
 
 // Fetch products
