@@ -1,6 +1,6 @@
 <?php
 require 'config.php';
-require 'auth.php';
+require_once __DIR__ . '/auth.php';
 
 // If already logged in, redirect based on role (admins -> admin.php, others -> index.php)
 if (is_logged_in()) {

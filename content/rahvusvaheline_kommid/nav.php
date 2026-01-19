@@ -1,6 +1,6 @@
 <?php
    require 'config.php';
-   require 'auth.php';
+   require_once __DIR__ . '/auth.php';
 
 $showLogout = false;
 $username = null;
@@ -24,10 +24,18 @@ if (function_exists('is_logged_in') && is_logged_in()) {
         <a href="index.php">Koduleht</a> |
         <a href="pricelist.php">Hinnakiri</a> |
         <a href="gallery.php">Galerii</a> |
-        <a href="admin.php">Admin</a>
+
+        <?php if (function_exists('is_admin') && is_admin()): ?>
+            <!-- Admin is logged in -->
+            <a href="admin.php">Admin</a>
+        <?php else: ?>
+            <!-- No admin signed in (show login link instead) -->
+            <a href="login.php">Log in</a>
+        <?php endif; ?>
+
         <?php if ($showLogout): ?>
             | <span>Tere, <?= htmlspecialchars($username ?? '', ENT_QUOTES) ?></span>
-            <a href="logout.php">Logi välja</a>
+            <a href="logout.php" style="margin-left:.5rem">Logi välja</a>
         <?php endif; ?>
     </nav>
 </header>

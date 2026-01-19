@@ -1,7 +1,7 @@
 <?php
 // admin.php — full admin page that reliably detects products PK column and uses it for edit links
 require 'config.php';
-require 'auth.php';
+require_once __DIR__ . '/auth.php';
 require_login(true);
 
 if (!isset($pdo) || !$pdo) {

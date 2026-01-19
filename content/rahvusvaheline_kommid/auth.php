@@ -1,8 +1,10 @@
 <?php
+// auth.php — session + DB-based authentication helpers.
+// Expects $pdo (PDO) to be available via config.php in pages that call authenticate().
+
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
-
 
 function authenticate(PDO $pdo, string $username, string $password) {
     try {
@@ -31,44 +33,38 @@ function is_admin(): bool {
 }
 
 function require_login(bool $adminOnly = false): void {
-    // If not logged in -> redirect to login page
-    if (!is_logged_in()) {
-        $loginUrl = 'login.php';
-        $requested = $_SERVER['REQUEST_URI'] ?? null;
-        if ($requested) $loginUrl .= '?redirect=' . urlencode($requested);
-
-        if (!headers_sent()) {
-            header('Location: ' . $loginUrl);
+    if (is_logged_in()) {
+        if ($adminOnly && !is_admin()) {
+            // Logged in but not admin — redirect to login (or show 403)
+            $loginUrl = 'login.php';
+            if (!headers_sent()) {
+                header('Location: ' . $loginUrl);
+                exit;
+            }
+            echo '<meta http-equiv="refresh" content="0;url=' . htmlspecialchars($loginUrl, ENT_QUOTES) . '">';
             exit;
         }
+        return;
+    }
 
-        $escaped = htmlspecialchars($loginUrl, ENT_QUOTES | ENT_SUBSTITUTE);
-        echo '<!doctype html><html><head>';
-        echo '<meta http-equiv="refresh" content="0;url=' . $escaped . '">';
-        echo '<script>window.location.href = ' . json_encode($loginUrl, JSON_UNESCAPED_SLASHES) . ';</script>';
-        echo '</head><body>Redirecting to <a href="' . $escaped . '">' . $escaped . '</a></body></html>';
+    $loginUrl = 'login.php';
+    $requested = $_SERVER['REQUEST_URI'] ?? null;
+    if ($requested) $loginUrl .= '?redirect=' . urlencode($requested);
+
+    if (!headers_sent()) {
+        header('Location: ' . $loginUrl);
         exit;
     }
 
-    // If logged in but adminOnly required and user is NOT admin -> redirect elsewhere (index.php) to avoid loop
-    if ($adminOnly && !is_admin()) {
-        $target = 'index.php'; // or a "403.php" page if you prefer
-        if (!headers_sent()) {
-            header('Location: ' . $target);
-            exit;
-        }
-        $escaped = htmlspecialchars($target, ENT_QUOTES | ENT_SUBSTITUTE);
-        echo '<!doctype html><html><head>';
-        echo '<meta http-equiv="refresh" content="0;url=' . $escaped . '">';
-        echo '<script>window.location.href = ' . json_encode($target, JSON_UNESCAPED_SLASHES) . ';</script>';
-        echo '</head><body>Redirecting to <a href="' . $escaped . '">' . $escaped . '</a></body></html>';
-        exit;
-    }
-
-    // else: logged in and (if adminOnly) user is admin — OK
+    // fallback if headers already sent
+    $escaped = htmlspecialchars($loginUrl, ENT_QUOTES | ENT_SUBSTITUTE);
+    echo '<!doctype html><html><head>';
+    echo '<meta http-equiv="refresh" content="0;url=' . $escaped . '">';
+    echo '<script>window.location.href = ' . json_encode($loginUrl, JSON_UNESCAPED_SLASHES) . ';</script>';
+    echo '</head><body>Redirecting to <a href="' . $escaped . '">' . $escaped . '</a></body></html>';
+    exit;
 }
 
-// Return current user info from session or null.
 function current_user(): ?array {
     if (!is_logged_in()) return null;
     return [
@@ -78,7 +74,6 @@ function current_user(): ?array {
     ];
 }
 
-// clears session
 function perform_logout(): void {
     if (session_status() === PHP_SESSION_ACTIVE) {
         $_SESSION = [];
