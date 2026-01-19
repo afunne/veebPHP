@@ -1,7 +1,7 @@
 <?php
-// admin_actions.php — full implementation for product and image CRUD
-// Supports: add/update/delete product, upload image (file or URL), delete image.
 // Handles return_to=edit to redirect back to edit.php after update.
+
+// some comments are anon cuz i dont want to see them in console or checking :P
 require_once __DIR__ . '/config.php';
 
 // Basic DB check
@@ -13,9 +13,7 @@ if (!isset($pdo) || !$pdo) {
 $action = $_POST['action'] ?? '';
 $return_to = $_POST['return_to'] ?? '';
 
-/**
- * Redirect helper that appends optional message as ?msg=
- */
+// Redirects helper
 function redirect_to(string $url, string $msg = null): void {
     if ($msg !== null && $msg !== '') {
         $sep = (strpos($url, '?') === false) ? '?' : '&';
@@ -25,9 +23,7 @@ function redirect_to(string $url, string $msg = null): void {
     exit;
 }
 
-/**
- * Check if a table has a given column
- */
+// Checks if a table has a given column
 function table_has_column(PDO $pdo, string $table, string $column): bool {
     try {
         $stmt = $pdo->prepare("SHOW COLUMNS FROM `$table` LIKE ?");
@@ -38,10 +34,7 @@ function table_has_column(PDO $pdo, string $table, string $column): bool {
     }
 }
 
-/**
- * Execute primary SQL; if it affects 0 rows, try alternative SQL.
- * Returns true if any statement affected rows.
- */
+// Returns true if any statement affected rows.
 function exec_with_fallback(PDO $pdo, string $sqlPrimary, array $paramsPrimary = [], string $sqlAlt = null, array $paramsAlt = []): bool {
     try {
         $stmt = $pdo->prepare($sqlPrimary);
@@ -64,11 +57,9 @@ function exec_with_fallback(PDO $pdo, string $sqlPrimary, array $paramsPrimary =
     return false;
 }
 
-/**
- * Determine return URL after actions.
- * If return_to === 'edit' and id given, return edit.php?id=...
- * Otherwise return admin.php
- */
+// Return URL after actions.
+//If return and id given, return edit else return admin
+
 function determine_return_url(int $id = 0, string $return_to = ''): string {
     if ($return_to === 'edit' && $id > 0) {
         return 'edit.php?id=' . urlencode($id);
@@ -250,7 +241,7 @@ if ($action === 'delete_image') {
                 [$id]
             );
         } catch (PDOException $e) {
-            // ignore
+            // ignores =w=
         }
 
         // If products.image_id exists, clear references

@@ -1,13 +1,18 @@
 <?php
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/auth.php';
+require 'config.php';
+require 'auth.php';
 
+// If already logged in, redirect based on role (admins -> admin.php, others -> index.php)
 if (is_logged_in()) {
-    header('Location: admin.php');
+    if (is_admin()) {
+        header('Location: admin.php');
+    } else {
+        header('Location: index.php');
+    }
     exit;
 }
 
-$redirect = $_GET['redirect'] ?? 'admin.php';
+$redirect = $_GET['redirect'] ?? 'index.php';
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -20,10 +25,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $user = authenticate($pdo, $username, $password);
         if ($user !== false) {
+            // Ensure session is started, regenerate id to prevent fixation, then set session data
             if (session_status() === PHP_SESSION_NONE) session_start();
+            session_regenerate_id(true);
+
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-            header('Location: ' . ($redirect ?: 'admin.php'));
+            $_SESSION['is_admin'] = $user['is_admin'] ? 1 : 0;
+
+            // Choose a safe redirect target:
+            if ($_SESSION['is_admin']) {
+                // Admins go to admin area
+                $target = 'admin.php';
+            } else {
+                // Non-admins must not be sent to admin.php; prefer redirect param unless it's admin.php
+                if ($redirect === 'admin.php' || stripos($redirect, 'admin.php') !== false) {
+                    $target = 'index.php';
+                } else {
+                    $target = $redirect ?: 'index.php';
+                }
+            }
+
+            header('Location: ' . $target);
             exit;
         } else {
             $msg = 'Vale kasutajanimi või parool.';
@@ -34,45 +57,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!doctype html>
 <html lang="et">
 <head>
-  <meta charset="utf-8">
-  <title>Admin login</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    /* small inline styles to ensure form looks okay */
-    .login-card{max-width:420px;margin:48px auto;padding:18px;border:1px solid #eee;border-radius:8px;background:#fff}
-    .login-card label{display:block;margin-bottom:10px}
-    .login-card input{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px}
-    .login-card .btn{margin-top:8px}
-  </style>
+    <meta charset="utf-8">
+    <title>Admin login</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="komm.css">
 </head>
 <body>
-  <?php require_once __DIR__ . '/nav.php'; ?>
-
-  <main class="container">
+<?php require 'nav.php'; ?>
+<main class="container">
     <div class="login-card card">
-      <h1>Admin sisselogimine</h1>
-
-      <?php if ($msg): ?>
-        <script>alert(<?= json_encode($msg, JSON_UNESCAPED_UNICODE) ?>);</script>
-      <?php endif; ?>
-
-      <form method="post" action="login.php">
-        <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirect, ENT_QUOTES) ?>">
-        <label>Kasutajanimi<br><input type="text" name="username" required></label>
-        <label>Parool<br><input type="password" name="password" required></label>
-        <div class="form-actions">
-          <button class="btn" type="submit">Logi sisse</button>
-        </div>
-      </form>
-
-      <p style="margin-top:12px;color:#666;font-size:.95rem;">
-        Märkus: selles failis on DEV-kontroll <strong>admin / 1234</strong> jaoks.
-        See on ainult testimiseks.
-      </p>
+        <h1>Logi sisse</h1>
+        <?php if ($msg): ?>
+            <script>alert(<?= json_encode($msg, JSON_UNESCAPED_UNICODE) ?>);</script>
+        <?php endif; ?>
+        <form method="post" action="login.php">
+            <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirect, ENT_QUOTES) ?>">
+            <label>Kasutajanimi<br><input type="text" name="username" required></label>
+            <label>Parool<br><input type="password" name="password" required></label>
+            <div class="form-actions">
+                <button class="btn" type="submit">Logi sisse</button>
+            </div>
+            <p>Märkus: selles failis on kontroll admin / 1234 jaoks.
+                opilane / 54321
+                See on ainult testimiseks. </p>
+        </form>
     </div>
-  </main>
-
-  <?php require_once __DIR__ . '/jalus.php'; ?>
+</main>
+<?php require 'jalus.php'; ?>
 </body>
 </html>

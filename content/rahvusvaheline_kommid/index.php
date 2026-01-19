@@ -19,10 +19,10 @@ require 'nav.php';
     <section class="services">
         <h2>Teenused</h2>
         <ul>
-            <li>Isikupärastatud lillekimbud</li>
-            <li>Pulmade ja ürituste lilled</li>
-            <li>Etttellimused ja aiandusteenused</li>
-            <li>Lillede kohaletoimetamine</li>
+            <li>isiklikud kommisoovid</li>
+            <li>tarne teistest riikidest</li>
+            <li>erinevad kommid proovimiseks</li>
+            <li>pagaritoodang</li>
         </ul>
     </section>
 

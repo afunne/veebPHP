@@ -1,17 +1,15 @@
 <?php
-// set_hash.php — one-off helper to set/update a user's password_hash in the users table.
-//
-// Usage (recommended):
+// Tasks (yeah im ugu gaga i need to write ts it is that hard)
 // 1) CLI: php set_hash.php username newpassword
-//    Example: php set_hash.php admin 1234
+//    php set_hash.php admin 1234
 // 2) Web: upload this file, open in browser and submit the form (then delete file).
 //
-// IMPORTANT: Delete this file from the server immediately after use.
+// Reminder to myself delete this file from the server immediately after use if problem occur.
 
-require_once __DIR__ . '/config.php'; // must set $pdo (PDO)
+require 'config.php';
 
 if (!isset($pdo) || !$pdo) {
-    echo "No DB connection found. Check config.php (must provide \$pdo).\n";
+    echo "DB-ühendust ei leitud. Kontrollige config.php (peab olema olemas \$pdo).\n";
     exit(1);
 }
 
@@ -75,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim((string)($_POST['username'] ?? ''));
     $password = (string)($_POST['password'] ?? '');
     do_update($pdo, $username, $password);
-    echo '<p><strong>Done. Remove this file from the server immediately.</strong></p>';
+    echo '<p><strong>Done. It will be removed after :P.</strong></p>';
     echo '<p><a href="javascript:history.back()">Back</a></p>';
     exit;
 }

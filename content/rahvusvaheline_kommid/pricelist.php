@@ -1,8 +1,7 @@
 <?php
-// Load DB connection (adjust path if db.php is in a different folder)
-require_once __DIR__ . '/config.php';
+require 'config.php';
 
-// Safety check: ensure $pdo was created
+// Safety check twin >:3: ensure $pdo was created
 if (!isset($pdo) || !$pdo) {
     http_response_code(500);
     echo "Andmebaasi ühendus puudub. Kontrolli db.php seadeid ja faili asukohta.";
@@ -15,7 +14,7 @@ $stmt = $pdo->query("SELECT id_products , name, description, price FROM products
 $products = $stmt->fetchAll();
 ?>
 
-<?php require_once __DIR__ . '/nav.php';
+<?php require 'nav.php';
 ?>
 
 <main class="container">
@@ -37,4 +36,4 @@ $products = $stmt->fetchAll();
     </table>
 </main>
 
-<?php require_once __DIR__ . '/jalus.php'; ?>
+<?php require 'jalus.php'; ?>

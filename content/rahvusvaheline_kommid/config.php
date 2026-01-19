@@ -1,17 +1,12 @@
 <?php
 $servername = "localhost";
-$username = "d141143_husseintahmazov";
-$password = "BakuBakiTal";
-$dbname = "d141143_husseintahmazov";
+$username = "husseintahmazov2";
+$password = "1234";
+$dbname = "husseintahmazov2";
 $conn = new mysqli($servername, $username, $password, $dbname);
 $conn->set_charset("utf8");
 
-$ADMIN_FALLBACK = [
-    'username' => 'admin',        // e.g. 'admin' or '' to disable
-    'password_hash' => '1234',   // password_hash('YourSecretHere', PASSWORD_DEFAULT)
-];
-
-// Ühendus PDO-ga
+// PDO
 $dsn = "mysql:host=$servername;dbname=$username;charset=utf8mb4";
 try {
     $pdo = new PDO($dsn, $username, $password, [

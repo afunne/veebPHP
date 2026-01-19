@@ -1,6 +1,4 @@
-/* Custom styles for edit.php (scoped to .edit-page)
-   Place this file alongside styles.css and include it from edit.php.
-*/
+/* Custom style for edit.php (scoped to .edit-page)*/
 
 .edit-page .container {
   max-width: 820px;
@@ -90,7 +88,7 @@
   border:1px solid rgba(42,157,143,0.12);
 }
 
-/* Make the "Sulge aken" smaller and subtle */
+/* "Sulge aken" smaller and subtle */
 .edit-page .btn-muted[onclick] { font-size:0.95rem; }
 
 /* Responsive tweaks */

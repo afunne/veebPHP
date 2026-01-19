@@ -1,6 +1,7 @@
 <?php
-// image.php — serveerib BLOB-i või suunab brauseri välisele URL-ile
-require_once __DIR__ . '/config.php';
+// image.php — serves a BLOB or redirects the browser to an external URL
+// spolier, it partly doesnt work but i kept it will fix soon
+require 'config.php';
 
 if (!isset($pdo) || !$pdo) {
     http_response_code(500);
@@ -19,7 +20,7 @@ try {
     $stmt->execute([$id]);
     $row = $stmt->fetch();
 } catch (PDOException $e) {
-    // ignore and try alternative column
+    // ignore NOW!
 }
 
 if (!$row) {
@@ -37,14 +38,15 @@ if (!$row) {
     exit('Pilt puudub');
 }
 
-// Kui data tühi või NULL -> proovime treat'ida kui välis-URL
+// If data is empty tries to treat it as an external URL
+// (PS: if anyone takes my work this is helping a lot)
 $data = $row['data'] ?? '';
 $mime = $row['mime_type'] ?? '';
 $filename = $row['filename'] ?? '';
 
 if (empty($data)) {
     if (filter_var($filename, FILTER_VALIDATE_URL)) {
-        // Suuname brauseri välisele pildile
+        // We redirect the browser to an external image
         header('Location: ' . $filename);
         exit;
     }
@@ -52,7 +54,7 @@ if (empty($data)) {
     exit('Pilt ei ole saadaval');
 }
 
-// teenime BLOB-i
+// BLOB
 header('Content-Type: ' . $mime);
 header('Content-Length: ' . strlen($data));
 echo $data;

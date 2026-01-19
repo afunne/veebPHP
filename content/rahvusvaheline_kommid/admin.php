@@ -1,18 +1,15 @@
 <?php
 // admin.php — full admin page that reliably detects products PK column and uses it for edit links
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/auth.php';
-require_login();
+require 'config.php';
+require 'auth.php';
+require_login(true);
 
 if (!isset($pdo) || !$pdo) {
     http_response_code(500);
-    echo "Andmebaasi ühendus puudub. Kontrolli config.php seadeid.";
+    echo "Andmebaasi ühendus puudub. Kontrolli config.php seadeid."; // for the debugging
     exit;
 }
 
-/**
- * Return the primary key column name for a table, or null if not found.
- */
 function get_primary_key_column(PDO $pdo, string $table): ?string {
     try {
         $stmt = $pdo->prepare("SHOW KEYS FROM `$table` WHERE Key_name = 'PRIMARY'");
@@ -22,7 +19,7 @@ function get_primary_key_column(PDO $pdo, string $table): ?string {
             return $row['Column_name'];
         }
     } catch (PDOException $e) {
-        // ignore
+        //ignores <_<
     }
 
     // Fallback common names
@@ -40,13 +37,11 @@ function get_primary_key_column(PDO $pdo, string $table): ?string {
     return null;
 }
 
-/**
- * Select products and return array of rows. Always include a computed 'pk' field with the PK value.
- */
+//Selects products and return array of rows
 function select_products_with_pk(PDO $pdo): array {
     $pk = get_primary_key_column($pdo, 'products') ?? null;
 
-    // Try recommended queries depending on pk
+    // Tries to do queries depending on pk :3
     if ($pk) {
         try {
             $sql = "SELECT `$pk` AS pk, name, price, description, " .
@@ -60,7 +55,7 @@ function select_products_with_pk(PDO $pdo): array {
         }
     }
 
-    // Fallback: try common explicit selects
+    // if it fails I am using ts
     $tryQueries = [
         "SELECT id AS pk, name, price, description, image_id FROM products ORDER BY id",
         "SELECT id_products AS pk, name, price, description, image_id FROM products ORDER BY id_products",
@@ -85,7 +80,7 @@ function select_products_with_pk(PDO $pdo): array {
                 return $rows;
             }
         } catch (PDOException $e) {
-            // ignore
+            // ignores <_<
         }
     }
 
@@ -111,7 +106,7 @@ function select_images(PDO $pdo): array {
 
 $images = select_images($pdo);
 
-// If editing from the admin page (we still support inline edit), try to load edit product using PK detection:
+// If editing from the admin page, try to load edit product using PK detection:
 $editProduct = null;
 if (isset($_GET['edit'])) {
     $editId = (int)$_GET['edit'];
@@ -126,7 +121,7 @@ if (isset($_GET['edit'])) {
                 $stmt->execute([$editId]);
                 $editProduct = $stmt->fetch(PDO::FETCH_ASSOC);
             } catch (PDOException $e) {
-                // ignore
+                // ignores <_<
             }
         } else {
             // last-resort: try id and id_products
@@ -140,7 +135,7 @@ if (isset($_GET['edit'])) {
                     $editProduct = $stmt->fetch(PDO::FETCH_ASSOC);
                 }
             } catch (PDOException $e) {
-                // ignore
+                // ignores <_<
             }
         }
     }
@@ -155,7 +150,7 @@ if (isset($_GET['edit'])) {
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <?php require_once __DIR__ . '/nav.php'; ?>
+  <?php require 'nav.php'; ?>
 
   <main class="container admin">
     <h1>Admin - Halduse leht</h1>
@@ -280,6 +275,6 @@ if (isset($_GET['edit'])) {
 
   </main>
 
-  <?php require_once __DIR__ . '/jalus.php'; ?>
+  <?php require 'jalus.php';?>
 </body>
 </html>

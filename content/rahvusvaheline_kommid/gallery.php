@@ -1,19 +1,18 @@
 <?php
-// gallery.php
-require_once __DIR__ . '/config.php';
+require 'config.php';
 
-// Kontroll, et $pdo on olemas
+// without this control it wont work idk :praying:
 if (!isset($pdo) || !$pdo) {
     http_response_code(500);
     echo "Andmebaasi ühendus puudub. Kontrolli config.php seadeid.";
     exit;
 }
 
-// Proovime esmalt tavapärast veergu "id", kui ebaõnnestub, proovime "id_images"
+// for the bugs to go away qwq
 try {
     $stmt = $pdo->query("SELECT id, filename, description, created_at FROM images ORDER BY created_at DESC");
 } catch (PDOException $e) {
-    // Kui esimene päring ebaõnnestus, proovime alternatiivset veergu
+    // If the first query failed, we will try an alternative column
     $stmt = $pdo->query("SELECT id_images AS id, filename, description, created_at FROM images ORDER BY created_at DESC");
 }
 
@@ -27,7 +26,7 @@ $images = $stmt->fetchAll();
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<?php require_once __DIR__ . '/nav.php'; ?>
+<?php require 'nav.php'; ?>
 
 <main class="container">
     <h1>Galerii</h1>
@@ -47,4 +46,4 @@ $images = $stmt->fetchAll();
     </div>
 </main>
 
-<?php require_once __DIR__ . '/jalus.php'; ?>
+<?php require 'jalus.php'; ?>

@@ -1,7 +1,6 @@
 <?php
-// edit.php — edit a single product in its own window/tab (robust PK detection)
-// Updated to include edit.css and body scoped class for custom styling
-require_once __DIR__ . '/config.php';
+// edit.php — edits a single product in its own window/tab, PK detection
+require 'config.php';
 
 if (!isset($pdo) || !$pdo) {
     http_response_code(500);
@@ -12,13 +11,11 @@ if (!isset($pdo) || !$pdo) {
 $id = (int)($_GET['id'] ?? 0);
 if ($id <= 0) {
     http_response_code(404);
-    echo "Toode puudub.";
+    echo "Toode puudub."; // for debugging (I had them too much)
     exit;
 }
 
-/**
- * Determine the primary key column for products (same helper as admin.php)
- */
+// Determites the primary key column for products (same helper as admin.php)
 function get_primary_key_column(PDO $pdo, string $table): ?string {
     try {
         $stmt = $pdo->prepare("SHOW KEYS FROM `$table` WHERE Key_name = 'PRIMARY'");
@@ -35,7 +32,7 @@ function get_primary_key_column(PDO $pdo, string $table): ?string {
             $stmt->execute([$c]);
             if ($stmt->fetch()) return $c;
         } catch (PDOException $e) {
-            // ignore
+            // ignore 030
         }
     }
     return null;
@@ -63,7 +60,7 @@ if (!$product) {
         $stmt->execute([$id]);
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        // ignore
+        // ignore uwu
     }
 }
 if (!$product) {
@@ -100,11 +97,10 @@ try {
   <meta charset="utf-8">
   <title>Muuda toodet — Magusad maailm</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="edit.css"> <!-- custom CSS for edit.php -->
 </head>
 <body class="edit-page">
-  <?php require_once __DIR__ . '/nav.php'; ?>
+  <?php require 'nav.php'; ?>
 
   <main class="container">
     <h1>Muuda toodet</h1>
@@ -154,6 +150,6 @@ try {
     </form>
   </main>
 
-  <?php require_once __DIR__ . '/jalus.php'; ?>
+  <?php require 'jalus.php'; ?>
 </body>
 </html>

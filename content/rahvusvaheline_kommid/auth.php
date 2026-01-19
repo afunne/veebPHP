@@ -1,68 +1,84 @@
 <?php
-// auth.php — session helpers + authenticate(username,password)
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
 
-function is_logged_in(): bool {
-    return session_status() === PHP_SESSION_ACTIVE && !empty($_SESSION['user_id']);
-}
 
-// Authenticate using DB users table first; if not found and fallback configured in config.php,
-// verify against fallback hashed password. Returns user array on success, false on failure.
 function authenticate(PDO $pdo, string $username, string $password) {
-    // 1) Try DB lookup
     try {
-        $stmt = $pdo->prepare('SELECT id, username, password_hash FROM users WHERE username = ? LIMIT 1');
+        $stmt = $pdo->prepare('SELECT id, username, password_hash, is_admin FROM users WHERE username = ? LIMIT 1');
         $stmt->execute([$username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user && !empty($user['password_hash']) && password_verify($password, $user['password_hash'])) {
             return [
                 'id' => $user['id'],
                 'username' => $user['username'],
+                'is_admin' => (int)($user['is_admin'] ?? 0),
             ];
         }
     } catch (PDOException $e) {
-        // DB may be missing or inaccessible — fall through to fallback if configured
+        // Optionally log error
     }
-
-    // 2) Optional fallback defined in config.php
-    if (isset($GLOBALS['ADMIN_FALLBACK']) && is_array($GLOBALS['ADMIN_FALLBACK'])) {
-        $fb = $GLOBALS['ADMIN_FALLBACK'];
-        if (!empty($fb['username']) && !empty($fb['password_hash']) && hash_equals((string)$fb['username'], $username)) {
-            if (password_verify($password, $fb['password_hash'])) {
-                // Synthetic user id to represent fallback login
-                return [
-                    'id' => 'fallback_' . $fb['username'],
-                    'username' => $fb['username'],
-                ];
-            }
-        }
-    }
-
     return false;
 }
 
-// require_login() and other helpers unchanged...
-function require_login(): void {
-    if (is_logged_in()) return;
-    $loginUrl = 'login.php';
-    $requested = $_SERVER['REQUEST_URI'] ?? null;
-    if ($requested) $loginUrl .= '?redirect=' . urlencode($requested);
-    if (!headers_sent()) {
-        header('Location: ' . $loginUrl);
-        exit;
-    }
-    $escaped = htmlspecialchars($loginUrl, ENT_QUOTES | ENT_SUBSTITUTE);
-    echo '<!doctype html><html><head>';
-    echo '<meta http-equiv="refresh" content="0;url=' . $escaped . '">';
-    echo '<script>window.location.href = ' . json_encode($loginUrl, JSON_UNESCAPED_SLASHES) . ';</script>';
-    echo '</head><body>';
-    echo 'Redirecting to <a href="' . $escaped . '">' . $escaped . '</a>';
-    echo '</body></html>';
-    exit;
+function is_logged_in(): bool {
+    return session_status() === PHP_SESSION_ACTIVE && !empty($_SESSION['user_id']);
 }
 
+function is_admin(): bool {
+    return is_logged_in() && !empty($_SESSION['is_admin']);
+}
+
+function require_login(bool $adminOnly = false): void {
+    // If not logged in -> redirect to login page
+    if (!is_logged_in()) {
+        $loginUrl = 'login.php';
+        $requested = $_SERVER['REQUEST_URI'] ?? null;
+        if ($requested) $loginUrl .= '?redirect=' . urlencode($requested);
+
+        if (!headers_sent()) {
+            header('Location: ' . $loginUrl);
+            exit;
+        }
+
+        $escaped = htmlspecialchars($loginUrl, ENT_QUOTES | ENT_SUBSTITUTE);
+        echo '<!doctype html><html><head>';
+        echo '<meta http-equiv="refresh" content="0;url=' . $escaped . '">';
+        echo '<script>window.location.href = ' . json_encode($loginUrl, JSON_UNESCAPED_SLASHES) . ';</script>';
+        echo '</head><body>Redirecting to <a href="' . $escaped . '">' . $escaped . '</a></body></html>';
+        exit;
+    }
+
+    // If logged in but adminOnly required and user is NOT admin -> redirect elsewhere (index.php) to avoid loop
+    if ($adminOnly && !is_admin()) {
+        $target = 'index.php'; // or a "403.php" page if you prefer
+        if (!headers_sent()) {
+            header('Location: ' . $target);
+            exit;
+        }
+        $escaped = htmlspecialchars($target, ENT_QUOTES | ENT_SUBSTITUTE);
+        echo '<!doctype html><html><head>';
+        echo '<meta http-equiv="refresh" content="0;url=' . $escaped . '">';
+        echo '<script>window.location.href = ' . json_encode($target, JSON_UNESCAPED_SLASHES) . ';</script>';
+        echo '</head><body>Redirecting to <a href="' . $escaped . '">' . $escaped . '</a></body></html>';
+        exit;
+    }
+
+    // else: logged in and (if adminOnly) user is admin — OK
+}
+
+// Return current user info from session or null.
+function current_user(): ?array {
+    if (!is_logged_in()) return null;
+    return [
+        'id' => $_SESSION['user_id'],
+        'username' => $_SESSION['username'] ?? null,
+        'is_admin' => !empty($_SESSION['is_admin']) ? 1 : 0,
+    ];
+}
+
+// clears session
 function perform_logout(): void {
     if (session_status() === PHP_SESSION_ACTIVE) {
         $_SESSION = [];
